@@ -2,15 +2,10 @@ import speech_recognition as sr
 import pyttsx3
 import pywhatkit
 import datetime
-import wikipedia
-import pyjokes
-import tkinter as tk
 import time
 import threading
 import pyautogui
 import torch
-
-from neuralintents import GenericAssistant
 
 
 listener = sr.Recognizer()
@@ -18,18 +13,10 @@ engine = pyttsx3.init()
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
-def self(self):
-    self.root = tk.Tk()
-    self.label = tk.Label(text="₪", font=("Arial",120,"bold"))
-    self.label.pack()
-
-    threading.Thread(target=self.run_bucky).start()
-    self.root.mainloop()
 
 def talk(text):
     engine.say(text)
     engine.runAndWait()
-    
 
 def take_command():
     try:
@@ -38,10 +25,10 @@ def take_command():
             voice = listener.listen(source)
             command = listener.recognize_google(voice)
             command = command.lower()
-            if 'bucky' in command:
-                talk('Yes Sir')
-                command = command.replace('bucky', '')
-                print(command)
+        if 'bucky' in command:
+            talk('Yes Sir')
+            command = command.replace('bucky', '')
+            print(command)
     except:
         pass
     return command
@@ -57,12 +44,29 @@ def run_bucky():
         pywhatkit.playonyt(song)
         event.wait(3)
         talk("I'm listening again")
+
+    elif 'write a note saying' in command:
+        mar = command.replace('write a note', '')
+        talk('writing '+ mar)
+        file = open('note.txt', 'a')
+        strTime = datetime.datetime.now().strftime('At %I:%M %p')
+        file.write(strTime)
+        file.write(' - ')
+        file.write(mar+'\n')
+
+    elif 'show note' in command:
+        talk('showing notes')
+        file = open('note.txt', 'r')
+        print(file.readlines)
+        talk(file.readlines(500))
+
     elif 'time' in command:
         time = datetime.datetime.now().strftime('%I:%M %p')
-        coolstuff = pywhatkit.search(time)
+        print(time)
         talk('current time is ' + time)
         event.wait(3)
         talk("I'm listening again")
+
     elif 'tell me' in command:
         look_for = command.replace('tell me', '')
         talk('telling you' + look_for)
@@ -83,6 +87,7 @@ def run_bucky():
         oughstuff = pywhatkit.search(guter)
         event.wait(3)
         talk("I'm listening again")
+        
     elif 'scroll' in command:
         jsfk = command.replace('scroll', '')
         pyautogui.moveTo(230,300,2)
@@ -105,24 +110,21 @@ def run_bucky():
         event.wait(4)
         talk("I'm listening again")
     
-    
     elif 'give me a second' in command:
         talk("waiting for 3 seconds")
         event.wait(3)
         talk("I'm listening again")
 
     elif 'shut down' in command:
-        closing = command.replace('shut down', 'Executing')
+        closing = command.replace('shutdown', 'Executing')
         print(closing)
         talk('Goodbye Sir')
         quit()
 
-    
     else:
-        talk('I did not get that, I will start to listen in 8 seconds')
+        talk('I did not get that, I will start to listen in 3 seconds')
         event.wait(3)
         talk("I'm listening again")
-
 
 while True:
     run_bucky()
