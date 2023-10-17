@@ -8,6 +8,10 @@ import pyautogui
 import torch
 import subprocess
 import os
+import spacy
+import textblob
+import random
+import json
 
 listener = sr.Recognizer()
 engine = pyttsx3.init()
@@ -15,7 +19,22 @@ rate = engine.getProperty('rate')
 engine.setProperty('rate', 160)     
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
+nlp = spacy.load('en_core_web_sm')
 
+
+def __init__(self, dialogue_file="C:\\Users\\losts\\OneDrive\\Desktop\\C++_Netbeans\\new ai\\dialogue.json"):
+        with open(dialogue_file, "r") as file:
+            self.dialogue = json.load(file)
+
+def get_random_greeting(self):
+        return random.choice(self.dialogue["greetings"])
+
+
+def querys():
+    query = [
+        "Acknowledged: I will do that master"
+    ]
+    return random.choice(query)
 
 def talk(text):
     engine.say(text)
@@ -29,19 +48,35 @@ def take_command():
             command = listener.recognize_google(voice)
             command = command.lower()
         if 'bucky' in command:
-            talk('Yes Sir')
             command = command.replace('bucky', '')
             print(command)
     except:
         pass
     return command
 
+def sentiment(command):
+    
+    analysis = textblob.TextBlob(command)
+    polarity = analysis.sentiment.polarity
+    corrected = analysis.correct()
+    if polarity > 0:
+        sentiment = "positive"
+    elif polarity < 0:
+        sentiment = "negative"
+    else:
+        sentiment = "neutral"
+
+    talk(f"Sentiment: {sentiment}")
+    talk(querys())
+
 
 def run_bucky():
     event = threading.Event()
     command = take_command()
-    print(command)
+    print("You: "+command)
+    
     if 'play' in command:
+        sentiment(command)
         song = command.replace('play', '')
         talk('playing ' + song)
         pywhatkit.playonyt(song)
@@ -49,6 +84,7 @@ def run_bucky():
         talk("I'm listening again")
 
     elif 'write a note saying' in command:
+        sentiment(command)
         mar = command.replace('write a note', '')
         talk('writing '+ mar)
         file = open('note.txt', 'a')
@@ -58,12 +94,14 @@ def run_bucky():
         file.write(mar+'\n')
 
     elif 'show note' in command:
+        sentiment(command)
         talk('showing notes')
         file = open('note.txt', 'r')
         print(file.readlines)
         talk(file.readlines(500))
 
     elif 'time' in command:
+        sentiment(command)
         time = datetime.datetime.now().strftime('%I:%M %p')
         print(time)
         talk('current time is ' + time)
@@ -71,13 +109,23 @@ def run_bucky():
         talk("I'm listening again")
 
     elif 'tell me' in command:
+        sentiment(command)
         look_for = command.replace('tell me', '')
         talk('telling you' + look_for)
         toughstuff = pywhatkit.search(look_for)
         event.wait(3)
         talk("I'm listening again")
 
+    elif 'search' in command:
+        sentiment(command)
+        bre = command.replace('search', '')
+        talk('searching' + bre)
+        toughstuff = pywhatkit.search(bre)
+        event.wait(3)
+        talk("I'm listening again")
+
     elif 'show me' in command:
+        sentiment(command)
         monster = command.replace('show me', '')
         talk('showing you' + monster)
         ghstuff = pywhatkit.search(monster)
@@ -85,6 +133,7 @@ def run_bucky():
         talk("I'm listening again")
 
     elif 'explain to me' in command:
+        sentiment(command)
         guter = command.replace('explain to me', '')
         talk('Explaining to you' + guter)
         oughstuff = pywhatkit.search(guter)
@@ -92,6 +141,7 @@ def run_bucky():
         talk("I'm listening again")
         
     elif 'scroll' in command:
+        sentiment(command)
         jsfk = command.replace('scroll', '')
         pyautogui.moveTo(230,300,2)
         pyautogui.click
@@ -99,6 +149,7 @@ def run_bucky():
         pyautogui.scroll(-500)
 
     elif 'figure out' in command:
+        sentiment(command)
         mercy = command.replace('figure out', '')
         talk('figuring out' + mercy)
         toustuff = pywhatkit.search(mercy)
@@ -106,6 +157,7 @@ def run_bucky():
         talk("I'm listening again")
 
     elif 'connect to raspberry' in command:
+        sentiment(command)
         maga = command.replace('connect to raspberry', '')
         os.system("start cmd /k ssh losts@superman")
         pyautogui.moveTo(1490,820,2)
@@ -117,6 +169,7 @@ def run_bucky():
         pyautogui.press('enter')
 
     elif 'hold on' in command:
+        sentiment(command)
         meas = command.replace('hold on', '')
         print(meas)
         talk('Waiting four seconds')
@@ -124,11 +177,21 @@ def run_bucky():
         talk("I'm listening again")
     
     elif 'give me a second' in command:
+        sentiment(command)
         talk("waiting for 3 seconds")
         event.wait(3)
         talk("I'm listening again")
 
+    elif 'wait a minute' in command:
+        sentiment(command)
+        raop = command.replace('wait a minute','')
+        print(raop)
+        talk('waiting for two minutes')
+        event.wait(120)
+        talk("I'm listening again")
+
     elif 'shut down' in command:
+        sentiment(command)
         closing = command.replace('shut down', '')
         print(closing)
         talk('Goodbye Sir')
