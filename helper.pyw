@@ -19,22 +19,27 @@ rate = engine.getProperty('rate')
 engine.setProperty('rate', 160)     
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
-nlp = spacy.load('en_core_web_sm')
 
-
-def __init__(self, dialogue_file="C:\\Users\\losts\\OneDrive\\Desktop\\C++_Netbeans\\new ai\\dialogue.json"):
-        with open(dialogue_file, "r") as file:
-            self.dialogue = json.load(file)
-
-def get_random_greeting(self):
-        return random.choice(self.dialogue["greetings"])
-
+#Used to ask a question or seek information
 
 def querys():
     query = [
         "Acknowledged: I will do that master"
     ]
     return random.choice(query)
+#Used to offer a recommendation or idea
+def suggestion():
+    suggestions = [
+        ""
+    ]
+    return random.choice(suggestions)
+
+def statment():
+    statements = [
+        ""
+    ]
+    return random.choice(statements)
+
 
 def talk(text):
     engine.say(text)
@@ -47,8 +52,8 @@ def take_command():
             voice = listener.listen(source)
             command = listener.recognize_google(voice)
             command = command.lower()
-        if 'bucky' in command:
-            command = command.replace('bucky', '')
+        if 'hk' in command:
+            command = command.replace('hk', '')
             print(command)
     except:
         pass
@@ -58,7 +63,6 @@ def sentiment(command):
     
     analysis = textblob.TextBlob(command)
     polarity = analysis.sentiment.polarity
-    corrected = analysis.correct()
     if polarity > 0:
         sentiment = "positive"
     elif polarity < 0:
